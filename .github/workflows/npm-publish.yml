@@ -1,0 +1,40 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.Domain }}
+          username: ${{ secrets.UserName }}
+          key: ${{ secrets.PassWord }}
+          script: |
+            cd ~/app
+            git pull origin main
+            npm install --production
+            pm2 restart node-app
