@@ -34,8 +34,14 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/app
-            cd ~/app
-            git pull origin master
-            npm install --production
-            pm2 restart node-app
+              sudo apt update && sudo apt install -y nodejs npm
+              sudo npm install -g pm2
+              mkdir -p ~/app
+              cd ~/app
+              if [ ! -d .git ]; then
+                git clone git@github.com:your-repo/sampleApp.git .
+              else
+                git pull origin master
+              fi
+              npm install --production
+              pm2 restart node-app || pm2 start app.js --name node-app
