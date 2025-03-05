@@ -36,8 +36,7 @@ jobs:
           script: |
               sudo apt update && sudo apt install -y nodejs npm
               sudo npm install -g pm2
-              mkdir -p ~/app
-              cd ~/app
+              cd /home/ubuntu/app/sampleApp
               if [ ! -d .git ]; then
                 git clone https://github.com/mnaiem262/sampleApp.git .
               else
